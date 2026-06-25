@@ -23,7 +23,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
 
         :root {
-            /* 토너먼트 색상 */
             --bg-dark: #22000b;
             --bg-light: #4d0018;
             --card-bg: #111111;
@@ -31,8 +30,6 @@
             --border-color: #444444;
             --line-default: #666666; 
             --line-active: #ffff00;  
-
-            /* 틱택토 색상 */
             --bg-tictactoe: #111113;
             --board-dark-bg: #252527;
         }
@@ -104,7 +101,7 @@
         }
         textarea:focus { outline: none; border-color: rgba(255,215,0,0.5); box-shadow: 0 0 18px rgba(255,165,0,0.1); }
 
-        .format-selection { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.8rem; }
+        .format-selection { display: flex; justify-content: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
         .format-label {
             background: rgba(255,255,255,0.05); padding: 9px 20px; border-radius: 100px;
             cursor: pointer; border: 1px solid rgba(255,255,255,0.12);
@@ -116,6 +113,24 @@
             background: rgba(255,200,0,0.1); border-color: #ffd700; color: #ffd700;
             box-shadow: 0 0 14px rgba(255,215,0,0.18);
         }
+
+        /* 시간 제한 선택 스타일 */
+        .time-selection { display: flex; justify-content: center; gap: 8px; margin-bottom: 1.8rem; flex-wrap: wrap; }
+        .time-label {
+            background: rgba(255,255,255,0.04); padding: 7px 15px; border-radius: 100px;
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.25s; font-weight: 700; font-size: 0.88rem; color: #777;
+        }
+        .time-label:hover { border-color: rgba(0,255,200,0.4); color: #aaa; }
+        .time-label input { display: none; }
+        .time-label:has(input:checked) {
+            background: rgba(0,200,180,0.1); border-color: #00c8b4; color: #00e8cc;
+            box-shadow: 0 0 12px rgba(0,200,180,0.2);
+        }
+        .time-section-label {
+            font-size: 0.8rem; color: #666; letter-spacing: 0.08em; margin-bottom: 0.5rem; font-weight: 600;
+        }
+
         .btn-start {
             background: linear-gradient(135deg, #c8002f 0%, #ff004d 55%, #ff3568 100%);
             color: white; border: none; padding: 1rem 2.5rem; font-size: 1.2rem;
@@ -145,7 +160,6 @@
         #top-half { overflow: auto; background: linear-gradient(135deg, #120005 0%, #29000d 100%); position: relative; }
         #bottom-half { background: var(--bg-tictactoe); display: flex; flex-direction: row; }
 
-        /* 대진표 레이아웃 */
         .bracket-scroll-container { display: flex; align-items: center; justify-content: center; min-width: 100%; min-height: 100%; padding: 0.5rem; }
         .bracket-layout { display: inline-flex; justify-content: center; align-items: stretch; gap: 1rem; margin: auto; }
         .bracket-side { display: flex; flex: 1; gap: 12px; }
@@ -192,11 +206,33 @@
         @keyframes pop { 0% { transform: scale(1); } 100% { transform: scale(1.08); } }
 
         .game-ui { width: 100%; height: 100%; flex-direction: row; justify-content: center; align-items: center; gap: 12px; }
-        .player-info { width: 90px; display: flex; flex-direction: column; align-items: center; opacity: 0.25; transition: opacity 0.3s; font-family: 'Jua', sans-serif; }
-        .player-info.active-turn { opacity: 1; }
-        .player-info.active-turn .info-bg { box-shadow: 0 0 15px var(--glow-color); border: 2px solid var(--glow-color); background: rgba(40, 40, 45, 0.95); }
-        .info-bg { background: rgba(0,0,0,0.4); padding: 10px 5px; border-radius: 12px; text-align: center; border: 2px solid #444; width: 100%; }
         
+        /* ★ 수정: player-info 자체는 항상 100% 불투명, info-bg가 흐려짐 */
+        .player-info { width: 90px; display: flex; flex-direction: column; align-items: center; font-family: 'Jua', sans-serif; }
+        .player-info .info-bg { opacity: 0.28; transition: opacity 0.3s; }
+        .player-info.active-turn .info-bg { opacity: 1; box-shadow: 0 0 15px var(--glow-color); border: 2px solid var(--glow-color); background: rgba(40, 40, 45, 0.95); }
+        .info-bg { background: rgba(0,0,0,0.4); padding: 10px 5px; border-radius: 12px; text-align: center; border: 2px solid #444; width: 100%; }
+
+        /* 무르기 버튼 */
+        .undo-btn {
+            width: 100%; margin-top: 5px; padding: 5px 0; border-radius: 8px; border: none;
+            font-size: 0.75rem; font-weight: 800; cursor: pointer; font-family: 'Pretendard', sans-serif;
+            background: rgba(255,180,0,0.15); color: #ffb400; border: 1px solid rgba(255,180,0,0.3);
+            transition: all 0.2s; letter-spacing: 0.04em;
+        }
+        .undo-btn:hover:not(:disabled) { background: rgba(255,180,0,0.3); color: #ffd700; border-color: #ffd700; }
+        .undo-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+        /* 타이머 배지 */
+        .timer-badge {
+            width: 100%; margin-top: 4px; text-align: center; font-size: 0.72rem; font-weight: 800;
+            color: #aaa; letter-spacing: 0.04em; font-family: 'Pretendard', sans-serif;
+            padding: 2px 0; border-radius: 6px; background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s;
+        }
+        .timer-badge.warning { color: #ff4400; background: rgba(255,60,0,0.12); border-color: rgba(255,80,0,0.3); animation: timerPulse 0.5s infinite alternate; }
+        @keyframes timerPulse { 0% { opacity: 1; } 100% { opacity: 0.5; } }
+
         .tictactoe-board {
             background-color: #666; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.7);
             width: 38vh; height: 38vh; max-width: 40vw; max-height: 40vh; aspect-ratio: 1/1;
@@ -215,7 +251,7 @@
         .ttt-mark.show { transform: scale(1); }
         .ttt-mark path, .ttt-mark circle, .ttt-mark line { stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
 
-        /* --- 게임 모달 --- */
+        /* --- 게임 모달 (전체화면) --- */
         .game-modal-overlay { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); }
         .game-modal-box { background: #14141a; border: 1px solid #3a3a4a; border-radius: 18px; padding: 2rem 2rem 1.6rem; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 30px 70px rgba(0,0,0,0.95); }
         .game-modal-msg { color: #f0f0f0; font-size: 1.05rem; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.7; font-family: 'Pretendard', sans-serif; }
@@ -228,6 +264,15 @@
         .gm-ok-gold { background: #ffd700; color: #000; }
         .gm-ok-gold:hover { background: #ffe84d; }
 
+        /* ★ 로컬 확인 오버레이 (스테이션 내부) */
+        .local-confirm-overlay {
+            position: absolute; inset: 0; background: rgba(10,8,18,0.94); backdrop-filter: blur(4px);
+            z-index: 80; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 1.2rem; text-align: center; border-radius: 10px;
+        }
+        .local-confirm-msg { color: #f0f0f0; font-size: 1rem; font-weight: 700; line-height: 1.65; margin-bottom: 1.2rem; font-family: 'Pretendard', sans-serif; }
+        .local-confirm-btns { display: flex; gap: 8px; }
+        .local-confirm-btn { padding: 0.55rem 1.4rem; border-radius: 8px; font-weight: 800; font-size: 0.9rem; border: none; cursor: pointer; font-family: 'Pretendard', sans-serif; transition: all 0.2s; }
     </style>
 </head>
 <body>
@@ -251,6 +296,14 @@
                     <label class="format-label"><input type="radio" name="matchFormat" value="5"> 5판 3선승</label>
                 </div>
 
+                <div class="time-section-label">⏱️ 한 수 제한 시간</div>
+                <div class="time-selection">
+                    <label class="time-label"><input type="radio" name="timeLimit" value="10"> 10초</label>
+                    <label class="time-label"><input type="radio" name="timeLimit" value="20"> 20초</label>
+                    <label class="time-label"><input type="radio" name="timeLimit" value="30"> 30초</label>
+                    <label class="time-label"><input type="radio" name="timeLimit" value="0" checked> 무제한</label>
+                </div>
+
                 <button class="btn-start" onclick="startTournament()">토너먼트 대진 생성</button>
                 <a href="https://킹수학.com" target="_self" class="btn-other-game">🎮 다른 게임 고르기</a>
             </div>
@@ -260,13 +313,9 @@
     <!-- 메인 게임 화면 -->
     <div id="screen-game" class="screen">
         
-        <!-- 왼쪽 상하 50% 홈 버튼 -->
         <button onclick="goHome()" title="첫 화면으로" class="fixed left-2 top-1/3 -translate-y-1/2 w-14 h-14 bg-black/70 hover:bg-black text-3xl rounded-full border-2 border-cyan-500 shadow-[0_0_15px_rgba(0,255,255,0.4)] z-[100] transition-all hover:scale-110 flex justify-center items-center pb-1 cursor-pointer">🏠</button>
-        
-        <!-- 오른쪽 상하 50% 전체화면 버튼 -->
         <button onclick="toggleFullScreen()" title="전체화면" class="fixed right-2 top-1/3 -translate-y-1/2 w-14 h-14 bg-black/70 hover:bg-black text-3xl rounded-full border-2 border-orange-500 shadow-[0_0_15px_rgba(255,153,0,0.4)] z-[100] transition-all hover:scale-110 flex justify-center items-center pb-1 cursor-pointer">🔲</button>
 
-        <!-- 상단 대진표 -->
         <div id="top-half" style="flex: 35;">
             <a href="https://킹수학.com" target="_blank" class="kingsooahk-top-btn">👑 킹수학.com</a>
             <div class="bracket-scroll-container">
@@ -281,7 +330,6 @@
             </div>
         </div>
 
-        <!-- 드래그로 크기 조절하는 분할선 -->
         <div id="split-divider" title="드래그하여 경기장 크기 조절" style="height:16px; background:#161616; border-top:2px solid #92400e; border-bottom:2px solid #92400e; display:flex; justify-content:center; align-items:center; cursor:ns-resize; flex-shrink:0; z-index:50; box-shadow:0 0 12px rgba(0,0,0,0.6); user-select:none;">
             <div style="display:flex; gap:8px; align-items:center; pointer-events:none;">
                 <div style="width:32px; height:2px; background:linear-gradient(to right, transparent, #d97706, transparent); border-radius:2px;"></div>
@@ -290,7 +338,6 @@
             </div>
         </div>
 
-        <!-- 하단 틱택토 게임판 -->
         <div id="bottom-half" style="flex: 65;">
             <!-- 왼쪽 게임판 (1번 판) -->
             <div id="game-station-1" class="game-station">
@@ -318,12 +365,38 @@
 
                     <div id="select-screen-1" class="selection-screen" style="display:none;"><div id="select-title-1" class="select-title"></div><div id="animal-grid-1" class="animal-grid"></div></div>
                     <div id="roulette-screen-1" class="roulette-screen" style="display:none;"><div class="text-lg font-bold text-white mb-2 font-sans">선공 룰렛</div><div id="roulette-disp-1" class="roulette-display">❓</div><div id="roulette-res-1" class="font-sans font-bold"></div></div>
+                    
                     <div id="game-ui-1" class="game-ui" style="display:none;">
-                        <div class="player-info" id="p1-info-1"><div class="info-bg"><span class="text-3xl block mb-1" id="p1-icon-1"></span><span class="text-sm block truncate font-sans text-white font-bold" id="p1-name-1"></span><div class="p-stone-preview mx-auto" id="p1-stone-1"></div></div></div>
+                        <div class="player-info" id="p1-info-1">
+                            <div class="info-bg">
+                                <span class="text-3xl block mb-1" id="p1-icon-1"></span>
+                                <span class="text-sm block truncate font-sans text-white font-bold" id="p1-name-1"></span>
+                                <div class="p-stone-preview mx-auto" id="p1-stone-1"></div>
+                            </div>
+                            <div class="timer-badge" id="timer-p1-1" style="display:none;"></div>
+                            <button class="undo-btn" id="undo-btn-p1-1" onclick="undoLastMove(1, 1)" disabled>↩ 무르기</button>
+                        </div>
                         <div id="board-1" class="tictactoe-board"></div>
-                        <div class="player-info" id="p2-info-1"><div class="info-bg"><span class="text-3xl block mb-1" id="p2-icon-1"></span><span class="text-sm block truncate font-sans text-white font-bold" id="p2-name-1"></span><div class="p-stone-preview mx-auto" id="p2-stone-1"></div></div></div>
+                        <div class="player-info" id="p2-info-1">
+                            <div class="info-bg">
+                                <span class="text-3xl block mb-1" id="p2-icon-1"></span>
+                                <span class="text-sm block truncate font-sans text-white font-bold" id="p2-name-1"></span>
+                                <div class="p-stone-preview mx-auto" id="p2-stone-1"></div>
+                            </div>
+                            <div class="timer-badge" id="timer-p2-1" style="display:none;"></div>
+                            <button class="undo-btn" id="undo-btn-p2-1" onclick="undoLastMove(1, 2)" disabled>↩ 무르기</button>
+                        </div>
                     </div>
-                    <div id="alert-screen-1" class="absolute inset-0 bg-black/95 flex flex-col justify-center items-center p-3 text-center z-[60]" style="display:none;"><h3 id="alert-msg-1" class="text-2xl font-bold text-white mb-5 font-sans leading-relaxed"></h3><button id="alert-btn-1" class="bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-8 py-3 rounded-lg text-lg font-sans"></button></div>
+
+                    <div id="alert-screen-1" class="absolute inset-0 bg-black/95 flex flex-col justify-center items-center p-3 text-center z-[60]" style="display:none;">
+                        <h3 id="alert-msg-1" class="text-2xl font-bold text-white mb-5 font-sans leading-relaxed"></h3>
+                        <div id="alert-btns-1" class="flex gap-3"></div>
+                    </div>
+                    <!-- 로컬 기권 확인창 -->
+                    <div id="local-confirm-1" class="local-confirm-overlay" style="display:none;">
+                        <div id="local-confirm-msg-1" class="local-confirm-msg"></div>
+                        <div id="local-confirm-btns-1" class="local-confirm-btns"></div>
+                    </div>
                 </div>
             </div>
 
@@ -353,18 +426,44 @@
 
                     <div id="select-screen-2" class="selection-screen" style="display:none;"><div id="select-title-2" class="select-title"></div><div id="animal-grid-2" class="animal-grid"></div></div>
                     <div id="roulette-screen-2" class="roulette-screen" style="display:none;"><div class="text-lg font-bold text-white mb-2 font-sans">선공 룰렛</div><div id="roulette-disp-2" class="roulette-display">❓</div><div id="roulette-res-2" class="font-sans font-bold"></div></div>
+                    
                     <div id="game-ui-2" class="game-ui" style="display:none;">
-                        <div class="player-info" id="p1-info-2"><div class="info-bg"><span class="text-3xl block mb-1" id="p1-icon-2"></span><span class="text-sm block truncate font-sans text-white font-bold" id="p1-name-2"></span><div class="p-stone-preview mx-auto" id="p1-stone-2"></div></div></div>
+                        <div class="player-info" id="p1-info-2">
+                            <div class="info-bg">
+                                <span class="text-3xl block mb-1" id="p1-icon-2"></span>
+                                <span class="text-sm block truncate font-sans text-white font-bold" id="p1-name-2"></span>
+                                <div class="p-stone-preview mx-auto" id="p1-stone-2"></div>
+                            </div>
+                            <div class="timer-badge" id="timer-p1-2" style="display:none;"></div>
+                            <button class="undo-btn" id="undo-btn-p1-2" onclick="undoLastMove(2, 1)" disabled>↩ 무르기</button>
+                        </div>
                         <div id="board-2" class="tictactoe-board"></div>
-                        <div class="player-info" id="p2-info-2"><div class="info-bg"><span class="text-3xl block mb-1" id="p2-icon-2"></span><span class="text-sm block truncate font-sans text-white font-bold" id="p2-name-2"></span><div class="p-stone-preview mx-auto" id="p2-stone-2"></div></div></div>
+                        <div class="player-info" id="p2-info-2">
+                            <div class="info-bg">
+                                <span class="text-3xl block mb-1" id="p2-icon-2"></span>
+                                <span class="text-sm block truncate font-sans text-white font-bold" id="p2-name-2"></span>
+                                <div class="p-stone-preview mx-auto" id="p2-stone-2"></div>
+                            </div>
+                            <div class="timer-badge" id="timer-p2-2" style="display:none;"></div>
+                            <button class="undo-btn" id="undo-btn-p2-2" onclick="undoLastMove(2, 2)" disabled>↩ 무르기</button>
+                        </div>
                     </div>
-                    <div id="alert-screen-2" class="absolute inset-0 bg-black/95 flex flex-col justify-center items-center p-3 text-center z-[60]" style="display:none;"><h3 id="alert-msg-2" class="text-2xl font-bold text-white mb-5 font-sans leading-relaxed"></h3><button id="alert-btn-2" class="bg-orange-500 hover:bg-orange-600 text-black font-bold px-8 py-3 rounded-lg text-lg font-sans"></button></div>
+
+                    <div id="alert-screen-2" class="absolute inset-0 bg-black/95 flex flex-col justify-center items-center p-3 text-center z-[60]" style="display:none;">
+                        <h3 id="alert-msg-2" class="text-2xl font-bold text-white mb-5 font-sans leading-relaxed"></h3>
+                        <div id="alert-btns-2" class="flex gap-3"></div>
+                    </div>
+                    <!-- 로컬 기권 확인창 -->
+                    <div id="local-confirm-2" class="local-confirm-overlay" style="display:none;">
+                        <div id="local-confirm-msg-2" class="local-confirm-msg"></div>
+                        <div id="local-confirm-btns-2" class="local-confirm-btns"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 게임 내 모달 -->
+    <!-- 게임 내 전체화면 모달 (홈 버튼 등) -->
     <div id="game-modal" class="game-modal-overlay" style="display:none;">
         <div class="game-modal-box">
             <div id="game-modal-msg" class="game-modal-msg"></div>
@@ -376,14 +475,13 @@
     </div>
 
     <script>
-        // CSS 변수 대신 직접 색상(Hex)을 지정하여 그라데이션 오류 원천 차단
         const ANIMALS = [
-            { id: 'dog', icon: '🐶', color: '#00FFFF' },   // Cyan
-            { id: 'cat', icon: '🐱', color: '#FF00FF' },   // Magenta
-            { id: 'rabbit', icon: '🐰', color: '#FFFF00' },// Yellow
-            { id: 'hamster', icon: '🐹', color: '#FF9900' }, // Orange
-            { id: 'panda', icon: '🐼', color: '#FF3333' },   // Red
-            { id: 'monkey', icon: '🐵', color: '#39FF14' }   // Neon Green
+            { id: 'dog',     icon: '🐶', color: '#00FFFF' },
+            { id: 'cat',     icon: '🐱', color: '#FF00FF' },
+            { id: 'rabbit',  icon: '🐰', color: '#FFFF00' },
+            { id: 'hamster', icon: '🐹', color: '#FF9900' },
+            { id: 'panda',   icon: '🐼', color: '#FF3333' },
+            { id: 'monkey',  icon: '🐵', color: '#39FF14' }
         ];
         const SIZE = 3;
 
@@ -392,17 +490,18 @@
         let matchFormat = 1;
         let targetWins = 1;
         let globalMatchCounter = 1;
+        let globalTimeLimit = 0;   // ★ 제한 시간 (0 = 무제한)
 
         let boardMatches = { 1: null, 2: null };
+        let boardTimers = { 1: null, 2: null };  // ★ 타이머 인터벌 핸들
         let audioCtx;
 
-        // 분할선 드래그로 경기장 크기 조절
+        // ─── 분할선 드래그 ────────────────────────────────────────────
         (function() {
             const divider = document.getElementById('split-divider');
             const topHalf = document.getElementById('top-half');
             const bottomHalf = document.getElementById('bottom-half');
             let dragging = false;
-
             function applyRatio(clientY) {
                 const screen = document.getElementById('screen-game');
                 const rect = screen.getBoundingClientRect();
@@ -410,41 +509,29 @@
                 topHalf.style.flex = pct;
                 bottomHalf.style.flex = 100 - pct;
             }
-
             divider.addEventListener('mousedown', e => { dragging = true; document.body.style.cursor = 'ns-resize'; e.preventDefault(); });
             document.addEventListener('mousemove', e => { if (dragging) applyRatio(e.clientY); });
             document.addEventListener('mouseup', () => { if (dragging) { dragging = false; document.body.style.cursor = ''; } });
-
             divider.addEventListener('touchstart', e => { dragging = true; e.preventDefault(); }, { passive: false });
             document.addEventListener('touchmove', e => { if (dragging) { applyRatio(e.touches[0].clientY); e.preventDefault(); } }, { passive: false });
             document.addEventListener('touchend', () => { dragging = false; });
         })();
 
-        // 홈 버튼 및 전체화면 기능 연결
+        // ─── 홈 / 전체화면 ────────────────────────────────────────────
         function goHome() {
             showGameModal({
                 message: '첫 화면으로 돌아가시겠습니까?<br><span style="color:#888; font-size:0.85rem;">진행 중인 토너먼트 데이터는 초기화됩니다.</span>',
-                okText: '나가기',
-                cancelText: '취소',
-                okClass: 'gm-ok-red',
+                okText: '나가기', cancelText: '취소', okClass: 'gm-ok-red',
                 onOk: () => location.reload()
             });
         }
-
         function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-                });
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+            else if (document.exitFullscreen) document.exitFullscreen();
         }
 
-        // 커스텀 인게임 모달
-        function showGameModal({ message, okText = '확인', cancelText = null, okClass = 'gm-ok-red', onOk, onCancel }) {
+        // ─── 전체화면 모달 ────────────────────────────────────────────
+        function showGameModal({ message, okText='확인', cancelText=null, okClass='gm-ok-red', onOk, onCancel }) {
             const modal = document.getElementById('game-modal');
             const okBtn = document.getElementById('game-modal-ok');
             const cancelBtn = document.getElementById('game-modal-cancel');
@@ -462,105 +549,57 @@
             modal.style.display = 'flex';
         }
 
+        // ─── 오디오 ───────────────────────────────────────────────────
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
         }
-
-        // 선공 룰렛 효과음
         function playRouletteTick() {
             if (!audioCtx) return;
             const now = audioCtx.currentTime;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.type = 'square'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.05);
             gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(now); osc.stop(now + 0.05);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.05);
         }
-
-        // 동물별 돌(마크) 놓는 효과음
         function playStoneSound(animalId) {
             if (!audioCtx) return;
             const now = audioCtx.currentTime;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             switch(animalId) {
-                case 'dog': 
-                    osc.type = 'triangle'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
-                    gain.gain.setValueAtTime(0.0, now); gain.gain.linearRampToValueAtTime(0.5, now + 0.02); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-                    osc.start(now); osc.stop(now + 0.15); break;
-                case 'cat': 
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(500, now); osc.frequency.linearRampToValueAtTime(800, now + 0.2);
-                    gain.gain.setValueAtTime(0.0, now); gain.gain.linearRampToValueAtTime(0.3, now + 0.05); gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
-                    osc.start(now); osc.stop(now + 0.25); break;
-                case 'rabbit': 
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.linearRampToValueAtTime(1200, now + 0.1);
-                    gain.gain.setValueAtTime(0.0, now); gain.gain.linearRampToValueAtTime(0.3, now + 0.02); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-                    osc.start(now); osc.stop(now + 0.15); break;
-                case 'hamster': 
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(1200, now); osc.frequency.linearRampToValueAtTime(1800, now + 0.08);
-                    gain.gain.setValueAtTime(0.0, now); gain.gain.linearRampToValueAtTime(0.2, now + 0.01); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                    osc.start(now); osc.stop(now + 0.1); break;
-                case 'panda': 
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(250, now); osc.frequency.exponentialRampToValueAtTime(150, now + 0.3);
-                    gain.gain.setValueAtTime(0.0, now); gain.gain.linearRampToValueAtTime(0.4, now + 0.05); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-                    osc.start(now); osc.stop(now + 0.35); break;
-                case 'monkey': 
-                    osc.type = 'triangle'; osc.frequency.setValueAtTime(600, now); osc.frequency.linearRampToValueAtTime(400, now + 0.1); osc.frequency.linearRampToValueAtTime(600, now + 0.2);
-                    gain.gain.setValueAtTime(0.0, now); gain.gain.linearRampToValueAtTime(0.3, now + 0.05); gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
-                    osc.start(now); osc.stop(now + 0.25); break;
-                default: 
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(400, now + 0.1);
-                    gain.gain.setValueAtTime(0.0, now); gain.gain.linearRampToValueAtTime(0.3, now + 0.01); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                    osc.start(now); osc.stop(now + 0.1); break;
+                case 'dog':    osc.type='triangle'; osc.frequency.setValueAtTime(400,now); osc.frequency.exponentialRampToValueAtTime(100,now+0.1); gain.gain.setValueAtTime(0,now); gain.gain.linearRampToValueAtTime(0.5,now+0.02); gain.gain.exponentialRampToValueAtTime(0.01,now+0.15); osc.start(now); osc.stop(now+0.15); break;
+                case 'cat':    osc.type='sine';     osc.frequency.setValueAtTime(500,now); osc.frequency.linearRampToValueAtTime(800,now+0.2);   gain.gain.setValueAtTime(0,now); gain.gain.linearRampToValueAtTime(0.3,now+0.05); gain.gain.linearRampToValueAtTime(0.01,now+0.25); osc.start(now); osc.stop(now+0.25); break;
+                case 'rabbit': osc.type='sine';     osc.frequency.setValueAtTime(600,now); osc.frequency.linearRampToValueAtTime(1200,now+0.1); gain.gain.setValueAtTime(0,now); gain.gain.linearRampToValueAtTime(0.3,now+0.02); gain.gain.exponentialRampToValueAtTime(0.01,now+0.15); osc.start(now); osc.stop(now+0.15); break;
+                case 'hamster':osc.type='sine';     osc.frequency.setValueAtTime(1200,now);osc.frequency.linearRampToValueAtTime(1800,now+0.08); gain.gain.setValueAtTime(0,now); gain.gain.linearRampToValueAtTime(0.2,now+0.01); gain.gain.exponentialRampToValueAtTime(0.01,now+0.1); osc.start(now); osc.stop(now+0.1); break;
+                case 'panda':  osc.type='sine';     osc.frequency.setValueAtTime(250,now); osc.frequency.exponentialRampToValueAtTime(150,now+0.3); gain.gain.setValueAtTime(0,now); gain.gain.linearRampToValueAtTime(0.4,now+0.05); gain.gain.exponentialRampToValueAtTime(0.01,now+0.35); osc.start(now); osc.stop(now+0.35); break;
+                case 'monkey': osc.type='triangle'; osc.frequency.setValueAtTime(600,now); osc.frequency.linearRampToValueAtTime(400,now+0.1); osc.frequency.linearRampToValueAtTime(600,now+0.2); gain.gain.setValueAtTime(0,now); gain.gain.linearRampToValueAtTime(0.3,now+0.05); gain.gain.linearRampToValueAtTime(0.01,now+0.25); osc.start(now); osc.stop(now+0.25); break;
+                default:       osc.type='sine';     osc.frequency.setValueAtTime(800,now); osc.frequency.exponentialRampToValueAtTime(400,now+0.1); gain.gain.setValueAtTime(0,now); gain.gain.linearRampToValueAtTime(0.3,now+0.01); gain.gain.exponentialRampToValueAtTime(0.01,now+0.1); osc.start(now); osc.stop(now+0.1); break;
             }
             osc.connect(gain); gain.connect(audioCtx.destination);
         }
-
-        function playBeep() {
-            playStoneSound('default');
-        }
-
-        function playDrum() {
-            playRouletteTick();
-        }
-
-        // 경기 승리 시 팡파르 효과음 (빠라다라단다라~)
-        function playWinSound() {
-            if(!audioCtx) return;
+        function playTimerExpireSound() {
+            if (!audioCtx) return;
             const now = audioCtx.currentTime;
-            
-            // G4 - C5 - E5 - G5 - E5 - G5
-            const notes = [
-                { f: 392.00, t: 0.0, d: 0.12 }, // 빠
-                { f: 523.25, t: 0.12, d: 0.12 }, // 라
-                { f: 659.25, t: 0.24, d: 0.12 }, // 다
-                { f: 783.99, t: 0.36, d: 0.12 }, // 라
-                { f: 659.25, t: 0.48, d: 0.12 }, // 단
-                { f: 783.99, t: 0.60, d: 0.6 }   // 다라~ (길게)
-            ];
-            
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(60, now + 0.4);
+            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.4, now + 0.02); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.4);
+        }
+        function playBeep()  { playStoneSound('default'); }
+        function playDrum()  { playRouletteTick(); }
+        function playWinSound() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const notes = [{f:392,t:0,d:.12},{f:523.25,t:.12,d:.12},{f:659.25,t:.24,d:.12},{f:783.99,t:.36,d:.12},{f:659.25,t:.48,d:.12},{f:783.99,t:.6,d:.6}];
             notes.forEach(note => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                
-                osc.type = 'triangle'; // 관악기 느낌의 파형
-                osc.frequency.value = note.f;
-                
-                gain.gain.setValueAtTime(0, now + note.t);
-                gain.gain.linearRampToValueAtTime(0.4, now + note.t + 0.02);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + note.t + note.d);
-                
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now + note.t);
-                osc.stop(now + note.t + note.d + 0.1);
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = 'triangle'; osc.frequency.value = note.f;
+                gain.gain.setValueAtTime(0, now+note.t); gain.gain.linearRampToValueAtTime(0.4, now+note.t+0.02); gain.gain.exponentialRampToValueAtTime(0.01, now+note.t+note.d);
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now+note.t); osc.stop(now+note.t+note.d+0.1);
             });
         }
 
-        // --- 토너먼트 빌드 로직 ---
+        // ─── 토너먼트 빌드 ─────────────────────────────────────────────
         function startTournament() {
             initAudio();
             const rawText = document.getElementById('participantsInput').value.trim();
@@ -574,12 +613,12 @@
             } else {
                 players = rawText.split(/[\n,]+/).map(p => p.trim()).filter(p => p !== '');
             }
-
             if (players.length < 2) return alert("참가자가 부족합니다.");
             if (players.length > 32) players = players.slice(0, 32);
 
             matchFormat = parseInt(document.querySelector('input[name="matchFormat"]:checked').value);
             targetWins = Math.ceil(matchFormat / 2);
+            globalTimeLimit = parseInt(document.querySelector('input[name="timeLimit"]:checked').value);
 
             document.getElementById('screen-input').classList.remove('active');
             document.getElementById('screen-game').classList.add('active');
@@ -593,36 +632,24 @@
             const bracketSize = Math.pow(2, Math.ceil(Math.log2(players.length)));
             const byeCount = bracketSize - players.length;
             players.sort(() => Math.random() - 0.5);
-
             const firstMatchCount = bracketSize / 2;
             let initialMatches = Array.from({ length: firstMatchCount }, () => ({ id: null, p1: null, p2: null, isBye: false, winner: null }));
-
             let spacedIndices = [0];
             while (spacedIndices.length < firstMatchCount) {
                 let next = [];
-                for (let i = 0; i < spacedIndices.length; i++) {
-                    next.push(spacedIndices[i]); next.push(spacedIndices[i] + spacedIndices.length);
-                }
+                for (let i = 0; i < spacedIndices.length; i++) { next.push(spacedIndices[i]); next.push(spacedIndices[i] + spacedIndices.length); }
                 spacedIndices = next;
             }
             let byeIndices = spacedIndices.slice(0, byeCount);
-
             let pIdx = 0;
             for (let i = 0; i < firstMatchCount; i++) {
-                if (byeIndices.includes(i)) {
-                    initialMatches[i].p1 = players[pIdx++];
-                    initialMatches[i].isBye = true;
-                    initialMatches[i].winner = initialMatches[i].p1;
-                } else {
-                    initialMatches[i].p1 = players[pIdx++]; initialMatches[i].p2 = players[pIdx++];
-                }
+                if (byeIndices.includes(i)) { initialMatches[i].p1 = players[pIdx++]; initialMatches[i].isBye = true; initialMatches[i].winner = initialMatches[i].p1; }
+                else { initialMatches[i].p1 = players[pIdx++]; initialMatches[i].p2 = players[pIdx++]; }
             }
-
             totalRounds = Math.log2(bracketSize);
             tournamentData = [initialMatches];
-
             for (let r = 1; r < totalRounds; r++) {
-                tournamentData.push(Array.from({ length: tournamentData[r - 1].length / 2 }, () => ({ id: null, p1: null, p2: null, winner: null })));
+                tournamentData.push(Array.from({ length: tournamentData[r-1].length/2 }, () => ({ id: null, p1: null, p2: null, winner: null })));
             }
             updateUpperRounds();
         }
@@ -630,11 +657,8 @@
         function assignMatchIds() {
             globalMatchCounter = 1;
             for (let r = 0; r < totalRounds; r++) {
-                let len = tournamentData[r].length;
-                for (let m = 0; m < len; m++) {
-                    if (!tournamentData[r][m].isBye) {
-                        tournamentData[r][m].id = globalMatchCounter++;
-                    }
+                for (let m = 0; m < tournamentData[r].length; m++) {
+                    if (!tournamentData[r][m].isBye) tournamentData[r][m].id = globalMatchCounter++;
                 }
             }
         }
@@ -645,45 +669,38 @@
                     const match = tournamentData[r][m];
                     const nextM = Math.floor(m / 2);
                     const slot = (m % 2 === 0) ? 'p1' : 'p2';
-                    tournamentData[r + 1][nextM][slot] = match.winner;
+                    tournamentData[r+1][nextM][slot] = match.winner;
                 }
             }
         }
 
-        // 대진 보드 랜더링
+        // ─── 대진표 렌더링 ─────────────────────────────────────────────
         function renderBracket() {
             const leftContainer = document.getElementById('bracket-left');
             const rightContainer = document.getElementById('bracket-right');
             const finalArea = document.getElementById('final-match-area');
-            
             leftContainer.innerHTML = ''; rightContainer.innerHTML = ''; finalArea.innerHTML = '';
 
             for (let r = 0; r < totalRounds - 1; r++) {
                 const leftCol = document.createElement('div'); leftCol.className = 'round-col';
                 const rightCol = document.createElement('div'); rightCol.className = 'round-col';
-                
                 const matchCount = tournamentData[r].length;
                 for (let m = 0; m < matchCount / 2; m++) leftCol.appendChild(createMatchCardDOM(r, m, tournamentData[r][m]));
                 for (let m = matchCount / 2; m < matchCount; m++) rightCol.appendChild(createMatchCardDOM(r, m, tournamentData[r][m]));
-                
-                leftContainer.appendChild(leftCol);
-                rightContainer.appendChild(rightCol); 
+                leftContainer.appendChild(leftCol); rightContainer.appendChild(rightCol);
             }
 
-            const finalMatch = tournamentData[totalRounds - 1][0];
-            const f1 = document.createElement('div'); f1.className = `final-box ${finalMatch.winner===finalMatch.p1?'winner':''}`; f1.innerText = finalMatch.p1 || "?";
-            const f2 = document.createElement('div'); f2.className = `final-box ${finalMatch.winner===finalMatch.p2?'winner':''}`; f2.innerText = finalMatch.p2 || "?";
+            const finalMatch = tournamentData[totalRounds-1][0];
+            const f1 = document.createElement('div'); f1.className = `final-box ${finalMatch.winner===finalMatch.p1?'winner':''}`; f1.innerText = finalMatch.p1||'?';
+            const f2 = document.createElement('div'); f2.className = `final-box ${finalMatch.winner===finalMatch.p2?'winner':''}`; f2.innerText = finalMatch.p2||'?';
             const vs = document.createElement('div'); vs.innerText = 'VS'; vs.style.cssText = 'color:#ff004d; font-weight:bold; font-size:1.2rem; font-style:italic;';
-            
-            if(!finalMatch.isBye && finalMatch.id) {
+            if (!finalMatch.isBye && finalMatch.id) {
                 const badge = document.createElement('div');
                 badge.style.cssText = "font-size:11px; background:#333; color:#ffd700; text-align:center; border-radius:10px; padding:2px 8px; margin-bottom:5px; font-weight:bold;";
                 badge.innerText = `제 ${finalMatch.id}경기`;
                 finalArea.appendChild(badge);
             }
-
-            const vsRow = document.createElement('div');
-            vsRow.style.cssText = 'display:flex; gap:10px; align-items:center; justify-content:center;';
+            const vsRow = document.createElement('div'); vsRow.style.cssText = 'display:flex; gap:10px; align-items:center; justify-content:center;';
             vsRow.appendChild(f1); vsRow.appendChild(vs); vsRow.appendChild(f2);
             finalArea.appendChild(vsRow);
         }
@@ -692,16 +709,10 @@
             const wrap = document.createElement('div'); wrap.className = 'match-wrapper';
             if (match.winner) wrap.classList.add('has-winner');
             if (match.p1 || match.p2) wrap.classList.add('has-participant');
-
             const card = document.createElement('div'); card.className = 'match-card';
-            
             if (boardMatches[1] && boardMatches[1].r === r && boardMatches[1].m === m) card.classList.add('active-match-1');
             if (boardMatches[2] && boardMatches[2].r === r && boardMatches[2].m === m) card.classList.add('active-match-2');
-
-            if (!match.isBye && match.id) {
-                card.insertAdjacentHTML('beforeend', `<div style="font-size:9px; background:#222; color:#bbb; text-align:center; border-bottom:1px solid #333; border-radius:3px 3px 0 0; padding:1px 0;">제 ${match.id}경기</div>`);
-            }
-
+            if (!match.isBye && match.id) card.insertAdjacentHTML('beforeend', `<div style="font-size:9px; background:#222; color:#bbb; text-align:center; border-bottom:1px solid #333; border-radius:3px 3px 0 0; padding:1px 0;">제 ${match.id}경기</div>`);
             if (match.isBye) {
                 card.style.borderBottom = 'none';
                 card.insertAdjacentHTML('beforeend', `<div class="team winner">${match.p1}</div>`);
@@ -714,84 +725,74 @@
             wrap.appendChild(card); return wrap;
         }
 
-        // --- 매치 분배 알고리즘 ---
+        // ─── 매치 분배 ─────────────────────────────────────────────────
         function findAndAssignMatches() {
-            let finalMatch = tournamentData[totalRounds - 1][0];
+            let finalMatch = tournamentData[totalRounds-1][0];
             if (finalMatch.winner) {
                 if (!boardMatches[1] && !boardMatches[2]) {
                     playWinSound();
-                    showGameModal({
-                        message: `🏆 토너먼트 종료!<br><span style="color:#ffd700; font-size:1.35rem;">${finalMatch.winner}</span><br>최종 우승 🎉`,
-                        okText: '🎉 닫기',
-                        okClass: 'gm-ok-gold'
-                    });
+                    showGameModal({ message: `🏆 토너먼트 종료!<br><span style="color:#ffd700; font-size:1.35rem;">${finalMatch.winner}</span><br>최종 우승 🎉`, okText: '🎉 닫기', okClass: 'gm-ok-gold' });
                 }
                 return;
             }
-
             if (!boardMatches[1]) {
                 let assigned = false;
-                for (let r = 0; r < totalRounds; r++) {
+                for (let r = 0; r < totalRounds && !assigned; r++) {
                     let len = tournamentData[r].length;
-                    for (let m = 0; m < len; m++) {
+                    for (let m = 0; m < len && !assigned; m++) {
                         let match = tournamentData[r][m];
                         if (!match.isBye && match.p1 && match.p2 && !match.winner) {
-                            if (boardMatches[2] && boardMatches[2].r === r && boardMatches[2].m === m) continue;
-                            if (len === 1 || m < len / 2 || !hasUnassignedLeftMatches()) {
-                                boardMatches[1] = { r, m, p1Score: 0, p2Score: 0, stage: 'waiting_ready', board: [], turn: 1, p1Animal: null, p2Animal: null, p1Ready: false, p2Ready: false, moves: [] };
-                                assigned = true; showReadyScreen(1); break;
+                            if (boardMatches[2] && boardMatches[2].r===r && boardMatches[2].m===m) continue;
+                            if (len===1 || m < len/2 || !hasUnassignedLeftMatches()) {
+                                boardMatches[1] = { r, m, p1Score:0, p2Score:0, stage:'waiting_ready', board:[], turn:1, p1Animal:null, p2Animal:null, p1Ready:false, p2Ready:false, moves:[], history:[] };
+                                assigned = true; showReadyScreen(1);
                             }
                         }
                     }
-                    if (assigned) break;
                 }
             }
-
             if (!boardMatches[2]) {
                 let assigned = false;
-                for (let r = 0; r < totalRounds; r++) {
+                for (let r = 0; r < totalRounds && !assigned; r++) {
                     let len = tournamentData[r].length;
-                    for (let m = len - 1; m >= 0; m--) {
+                    for (let m = len-1; m >= 0 && !assigned; m--) {
                         let match = tournamentData[r][m];
                         if (!match.isBye && match.p1 && match.p2 && !match.winner) {
-                            if (boardMatches[1] && boardMatches[1].r === r && boardMatches[1].m === m) continue;
-                            if (len === 1 || m >= len / 2 || !hasUnassignedRightMatches()) {
-                                boardMatches[2] = { r, m, p1Score: 0, p2Score: 0, stage: 'waiting_ready', board: [], turn: 1, p1Animal: null, p2Animal: null, p1Ready: false, p2Ready: false, moves: [] };
-                                assigned = true; showReadyScreen(2); break;
+                            if (boardMatches[1] && boardMatches[1].r===r && boardMatches[1].m===m) continue;
+                            if (len===1 || m >= len/2 || !hasUnassignedRightMatches()) {
+                                boardMatches[2] = { r, m, p1Score:0, p2Score:0, stage:'waiting_ready', board:[], turn:1, p1Animal:null, p2Animal:null, p1Ready:false, p2Ready:false, moves:[], history:[] };
+                                assigned = true; showReadyScreen(2);
                             }
                         }
                     }
-                    if (assigned) break;
                 }
             }
-
             renderBracket();
             updateStationHeaders();
         }
 
         function hasUnassignedLeftMatches() {
             for (let r = 0; r < totalRounds; r++) {
-                let len = tournamentData[r].length; if(len <= 1) continue;
-                for(let m = 0; m < len / 2; m++) {
+                let len = tournamentData[r].length; if (len <= 1) continue;
+                for (let m = 0; m < len/2; m++) {
                     let match = tournamentData[r][m];
                     if (!match.isBye && match.p1 && match.p2 && !match.winner) {
-                        if (boardMatches[1] && boardMatches[1].r === r && boardMatches[1].m === m) continue;
-                        if (boardMatches[2] && boardMatches[2].r === r && boardMatches[2].m === m) continue;
+                        if (boardMatches[1] && boardMatches[1].r===r && boardMatches[1].m===m) continue;
+                        if (boardMatches[2] && boardMatches[2].r===r && boardMatches[2].m===m) continue;
                         return true;
                     }
                 }
             }
             return false;
         }
-
         function hasUnassignedRightMatches() {
             for (let r = 0; r < totalRounds; r++) {
-                let len = tournamentData[r].length; if(len <= 1) continue;
-                for(let m = Math.floor(len / 2); m < len; m++) {
+                let len = tournamentData[r].length; if (len <= 1) continue;
+                for (let m = Math.floor(len/2); m < len; m++) {
                     let match = tournamentData[r][m];
                     if (!match.isBye && match.p1 && match.p2 && !match.winner) {
-                        if (boardMatches[1] && boardMatches[1].r === r && boardMatches[1].m === m) continue;
-                        if (boardMatches[2] && boardMatches[2].r === r && boardMatches[2].m === m) continue;
+                        if (boardMatches[1] && boardMatches[1].r===r && boardMatches[1].m===m) continue;
+                        if (boardMatches[2] && boardMatches[2].r===r && boardMatches[2].m===m) continue;
                         return true;
                     }
                 }
@@ -799,40 +800,27 @@
             return false;
         }
 
-        // --- 선수 준비 화면 (Ready Screen) ---
+        // ─── 준비 화면 ─────────────────────────────────────────────────
         function showReadyScreen(bId) {
             let bm = boardMatches[bId];
             let match = tournamentData[bm.r][bm.m];
-            
-            document.getElementById(`select-screen-${bId}`).style.display = 'none';
-            document.getElementById(`game-ui-${bId}`).style.display = 'none';
-            document.getElementById(`alert-screen-${bId}`).style.display = 'none';
-            document.getElementById(`roulette-screen-${bId}`).style.display = 'none';
-            
+            ['select-screen','game-ui','alert-screen','roulette-screen'].forEach(id => document.getElementById(`${id}-${bId}`).style.display = 'none');
             document.getElementById(`ready-title-${bId}`).innerText = `[제 ${match.id}경기] 선수 등판`;
             document.getElementById(`ready-p1-name-${bId}`).innerText = match.p1;
             document.getElementById(`ready-p2-name-${bId}`).innerText = match.p2;
-            
             let btn1 = document.getElementById(`btn-ready-p1-${bId}`);
             let btn2 = document.getElementById(`btn-ready-p2-${bId}`);
-            
             btn1.className = "w-full bg-gray-700 hover:bg-gray-600 text-gray-300 font-bold py-4 rounded-xl border-2 border-gray-500 transition-all text-xl shadow-md";
-            btn1.innerText = "준비하기";
-            btn1.onclick = () => setPlayerReady(bId, 1);
-            
+            btn1.innerText = "준비하기"; btn1.onclick = () => setPlayerReady(bId, 1);
             btn2.className = "w-full bg-gray-700 hover:bg-gray-600 text-gray-300 font-bold py-4 rounded-xl border-2 border-gray-500 transition-all text-xl shadow-md";
-            btn2.innerText = "준비하기";
-            btn2.onclick = () => setPlayerReady(bId, 2);
-            
+            btn2.innerText = "준비하기"; btn2.onclick = () => setPlayerReady(bId, 2);
             document.getElementById(`ready-screen-${bId}`).style.display = 'flex';
         }
 
         function setPlayerReady(bId, pNum) {
             let bm = boardMatches[bId];
             if (!bm || bm.stage !== 'waiting_ready') return;
-            
             playBeep();
-            
             if (pNum === 1) {
                 bm.p1Ready = true;
                 let btn1 = document.getElementById(`btn-ready-p1-${bId}`);
@@ -844,25 +832,20 @@
                 btn2.className = "w-full bg-orange-600 text-white font-bold py-4 rounded-xl border-2 border-orange-300 shadow-[0_0_20px_#ff9900] transition-all text-xl scale-105";
                 btn2.innerText = "준비 완료!";
             }
-            
             if (bm.p1Ready && bm.p2Ready) {
-                setTimeout(() => {
-                    document.getElementById(`ready-screen-${bId}`).style.display = 'none';
-                    startBoardSequence(bId);
-                }, 800);
+                setTimeout(() => { document.getElementById(`ready-screen-${bId}`).style.display = 'none'; startBoardSequence(bId); }, 800);
             }
         }
 
-        // --- 개별 틱택토 엔진 진행 흐름 ---
+        // ─── 틱택토 게임 흐름 ──────────────────────────────────────────
         function startBoardSequence(bId) {
+            clearBoardTimer(bId);
             let bm = boardMatches[bId];
             bm.stage = 'select_p1';
             bm.p1Animal = null; bm.p2Animal = null;
-            
             document.getElementById(`game-ui-${bId}`).style.display = 'none';
             document.getElementById(`alert-screen-${bId}`).style.display = 'none';
             document.getElementById(`select-screen-${bId}`).style.display = 'flex';
-            
             renderAnimalSelectionGrid(bId);
         }
 
@@ -870,30 +853,19 @@
             let bm = boardMatches[bId];
             const grid = document.getElementById(`animal-grid-${bId}`);
             grid.innerHTML = '';
-            
             let match = tournamentData[bm.r][bm.m];
             let targetName = bm.stage === 'select_p1' ? match.p1 : match.p2;
             let displayColor = bm.stage === 'select_p1' ? '#00ffff' : '#ff9900';
-            
             document.getElementById(`select-title-${bId}`).innerHTML = `<span style="color:${displayColor}">${targetName}</span> 캐릭터 선택`;
-
             ANIMALS.forEach(animal => {
                 const card = document.createElement('div');
                 card.className = 'animal-card bg-neutral-800 border border-neutral-700 rounded-xl flex flex-col justify-center items-center cursor-pointer p-4';
-                if (bm.stage === 'select_p2' && bm.p1Animal.id === animal.id) {
-                    card.classList.add('opacity-30', 'pointer-events-none', 'grayscale');
-                }
+                if (bm.stage === 'select_p2' && bm.p1Animal.id === animal.id) card.classList.add('opacity-30', 'pointer-events-none', 'grayscale');
                 card.innerHTML = `<div class="animal-icon text-5xl mb-2">${animal.icon}</div>`;
-                
                 card.onclick = () => {
                     playBeep();
-                    if (bm.stage === 'select_p1') {
-                        bm.p1Animal = animal; bm.stage = 'select_p2';
-                        renderAnimalSelectionGrid(bId);
-                    } else {
-                        bm.p2Animal = animal;
-                        runBoardRoulette(bId);
-                    }
+                    if (bm.stage === 'select_p1') { bm.p1Animal = animal; bm.stage = 'select_p2'; renderAnimalSelectionGrid(bId); }
+                    else { bm.p2Animal = animal; runBoardRoulette(bId); }
                 };
                 grid.appendChild(card);
             });
@@ -902,34 +874,23 @@
         function runBoardRoulette(bId) {
             let bm = boardMatches[bId];
             document.getElementById(`select-screen-${bId}`).style.display = 'none';
-            
             const rScreen = document.getElementById(`roulette-screen-${bId}`);
             const rDisp = document.getElementById(`roulette-disp-${bId}`);
             const rRes = document.getElementById(`roulette-res-${bId}`);
             rScreen.style.display = 'flex'; rRes.textContent = "";
-
             let count = 0;
             const pair = [bm.p1Animal, bm.p2Animal];
-            
             const task = setInterval(() => {
-                playDrum();
-                rDisp.textContent = pair[count % 2].icon;
-                count++;
+                playDrum(); rDisp.textContent = pair[count%2].icon; count++;
                 if (count > 10) {
                     clearInterval(task);
                     const rand = Math.floor(Math.random() * 2);
                     bm.turn = rand === 0 ? 1 : 2;
-                    
                     let match = tournamentData[bm.r][bm.m];
                     let winnerPlayerName = rand === 0 ? match.p1 : match.p2;
-                    
                     rDisp.textContent = pair[rand].icon;
                     rRes.innerHTML = `<span style="color:#ffd700; font-size:2rem;">${winnerPlayerName}</span> 선공!`;
-                    
-                    setTimeout(() => {
-                        rScreen.style.display = 'none';
-                        buildTictactoeBoardArea(bId);
-                    }, 1200);
+                    setTimeout(() => { rScreen.style.display = 'none'; buildTictactoeBoardArea(bId); }, 1200);
                 }
             }, 100);
         }
@@ -939,39 +900,40 @@
             bm.stage = 'playing';
             bm.board = Array(SIZE).fill(null).map(() => Array(SIZE).fill(null));
             bm.moves = [];
+            bm.history = [];  // ★ 무르기 히스토리 초기화
 
             document.getElementById(`game-ui-${bId}`).style.display = 'flex';
-            
+
+            // 타이머 배지 초기 설정
+            const showTimer = globalTimeLimit > 0;
+            ['p1','p2'].forEach(prefix => {
+                const badge = document.getElementById(`timer-${prefix}-${bId}`);
+                badge.style.display = showTimer ? 'block' : 'none';
+                badge.classList.remove('warning');
+            });
+
             let match = tournamentData[bm.r][bm.m];
             setPlayerWidget(bId, 'p1', match.p1, bm.p1Animal);
             setPlayerWidget(bId, 'p2', match.p2, bm.p2Animal);
-            
+
+            // 무르기 버튼 초기 비활성화
+            document.getElementById(`undo-btn-p1-${bId}`).disabled = true;
+            document.getElementById(`undo-btn-p2-${bId}`).disabled = true;
+
             drawBoardCells(bId);
             refreshTurnGlowUI(bId);
+            startTurnTimer(bId);  // ★ 타이머 시작
         }
 
         function setPlayerWidget(bId, prefix, name, animal) {
             document.getElementById(`${prefix}-icon-${bId}`).textContent = animal.icon;
             document.getElementById(`${prefix}-name-${bId}`).textContent = name;
-            
             const stonePrev = document.getElementById(`${prefix}-stone-${bId}`);
-            let symbol = '';
-            
-            if (prefix === 'p1') {
-                symbol = `<svg viewBox="0 0 100 100" style="width:100%; height:100%;">
-                    <circle cx="50" cy="50" r="35" stroke="${animal.color}" stroke-width="12" fill="none" />
-                </svg>`;
-            } else {
-                symbol = `<svg viewBox="0 0 100 100" style="width:100%; height:100%;">
-                    <line x1="25" y1="25" x2="75" y2="75" stroke="${animal.color}" stroke-width="12" stroke-linecap="round" />
-                    <line x1="75" y1="25" x2="25" y2="75" stroke="${animal.color}" stroke-width="12" stroke-linecap="round" />
-                </svg>`;
-            }
-            
+            let symbol = prefix === 'p1'
+                ? `<svg viewBox="0 0 100 100" style="width:100%; height:100%;"><circle cx="50" cy="50" r="35" stroke="${animal.color}" stroke-width="12" fill="none"/></svg>`
+                : `<svg viewBox="0 0 100 100" style="width:100%; height:100%;"><line x1="25" y1="25" x2="75" y2="75" stroke="${animal.color}" stroke-width="12" stroke-linecap="round"/><line x1="75" y1="25" x2="25" y2="75" stroke="${animal.color}" stroke-width="12" stroke-linecap="round"/></svg>`;
             stonePrev.innerHTML = symbol;
-            stonePrev.style.background = 'transparent';
-            stonePrev.style.border = 'none';
-            
+            stonePrev.style.background = 'transparent'; stonePrev.style.border = 'none';
             document.getElementById(`${prefix}-info-${bId}`).style.setProperty('--glow-color', animal.color);
         }
 
@@ -981,16 +943,8 @@
                 for (let c = 0; c < SIZE; c++) {
                     const block = document.createElement('div'); block.className = 'cell';
                     block.dataset.r = r; block.dataset.c = c;
-                    
-                    // Touch events for mobile responsiveness + Click fallback
-                    block.addEventListener('touchstart', function(e) {
-                        e.preventDefault();
-                        onTictactoeCellClick(bId, r, c);
-                    }, { passive: false });
-                    block.addEventListener('mousedown', function(e) {
-                        onTictactoeCellClick(bId, r, c);
-                    });
-                    
+                    block.addEventListener('touchstart', function(e) { e.preventDefault(); onTictactoeCellClick(bId, r, c); }, { passive: false });
+                    block.addEventListener('mousedown', function() { onTictactoeCellClick(bId, r, c); });
                     el.appendChild(block);
                 }
             }
@@ -1002,6 +956,109 @@
             document.getElementById(`p2-info-${bId}`).classList.toggle('active-turn', bm.turn === 2);
         }
 
+        // ─── ★ 타이머 유틸 ────────────────────────────────────────────
+        function startTurnTimer(bId) {
+            clearBoardTimer(bId);
+            if (globalTimeLimit <= 0) return;
+
+            let bm = boardMatches[bId];
+            let remaining = globalTimeLimit;
+
+            function updateBadge() {
+                const currentTurn = bm.turn;
+                const prefix = currentTurn === 1 ? 'p1' : 'p2';
+                // 현재 턴 플레이어 뱃지만 표시
+                ['p1','p2'].forEach(p => {
+                    const badge = document.getElementById(`timer-${p}-${bId}`);
+                    if (p === prefix) {
+                        badge.style.display = 'block';
+                        badge.textContent = `⏱ ${remaining}초`;
+                        badge.classList.toggle('warning', remaining <= 5);
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                });
+            }
+
+            updateBadge();
+            boardTimers[bId] = setInterval(() => {
+                remaining--;
+                updateBadge();
+                if (remaining <= 0) {
+                    clearBoardTimer(bId);
+                    passTurnOnTimeout(bId);
+                }
+            }, 1000);
+        }
+
+        function clearBoardTimer(bId) {
+            if (boardTimers[bId]) { clearInterval(boardTimers[bId]); boardTimers[bId] = null; }
+            // 배지 숨기기
+            ['p1','p2'].forEach(p => {
+                const badge = document.getElementById(`timer-${p}-${bId}`);
+                if (badge) { badge.style.display = 'none'; badge.classList.remove('warning'); }
+            });
+        }
+
+        function passTurnOnTimeout(bId) {
+            let bm = boardMatches[bId];
+            if (!bm || bm.stage !== 'playing') return;
+            playTimerExpireSound();
+            // 턴만 강제 전환 (착수 없이)
+            bm.turn = bm.turn === 1 ? 2 : 1;
+            refreshTurnGlowUI(bId);
+            startTurnTimer(bId);
+        }
+
+        // ─── ★ 무르기 ──────────────────────────────────────────────────
+        function undoLastMove(bId, requesterPNum) {
+            let bm = boardMatches[bId];
+            if (!bm || bm.stage !== 'playing' || bm.history.length === 0) return;
+
+            // 무르기 규칙: 본인이 둔 수를 본인이 무름
+            // P1 버튼 → P1의 마지막 수를 무름 (P1이 막 뒀고 지금 P2 차례일 때만 활성화)
+            const lastMove = bm.history[bm.history.length - 1];
+            if (lastMove.p !== requesterPNum) return;  // 내가 두지 않은 수는 못 무름
+
+            clearBoardTimer(bId);
+            playBeep();
+
+            // 히스토리에서 꺼내기
+            bm.history.pop();
+            const { r, c, p } = lastMove;
+
+            // 보드 데이터 초기화
+            bm.board[r][c] = null;
+
+            // DOM에서 마크 제거
+            const cells = document.getElementById(`board-${bId}`).querySelectorAll('.cell');
+            const cellEl = cells[r * SIZE + c];
+            const markEl = cellEl.querySelector('.ttt-mark');
+            if (markEl) markEl.remove();
+
+            // moves 배열도 동기화
+            bm.moves = bm.history.map(h => ({r: h.r, c: h.c, p: h.p}));
+
+            // 턴 복원
+            bm.turn = p;
+            refreshTurnGlowUI(bId);
+
+            // 무르기 버튼 상태 갱신
+            refreshUndoButtons(bId);
+
+            startTurnTimer(bId);
+        }
+
+        function refreshUndoButtons(bId) {
+            let bm = boardMatches[bId];
+            if (!bm) return;
+            // 본인이 마지막으로 뒀을 때(상대 차례) 자신의 무르기 버튼 활성화
+            const lastMove = bm.history.length > 0 ? bm.history[bm.history.length - 1] : null;
+            document.getElementById(`undo-btn-p1-${bId}`).disabled = !(lastMove && lastMove.p === 1);
+            document.getElementById(`undo-btn-p2-${bId}`).disabled = !(lastMove && lastMove.p === 2);
+        }
+
+        // ─── 클릭 처리 ─────────────────────────────────────────────────
         function onTictactoeCellClick(bId, r, c) {
             let bm = boardMatches[bId];
             if (!bm || bm.stage !== 'playing' || bm.board[r][c] !== null) return;
@@ -1009,86 +1066,87 @@
             const turnIdx = bm.turn;
             const animal = turnIdx === 1 ? bm.p1Animal : bm.p2Animal;
             bm.board[r][c] = turnIdx;
-            bm.moves.push({r, c, p: turnIdx});
             
+            const moveEntry = { r, c, p: turnIdx };
+            bm.moves.push(moveEntry);
+            bm.history.push(moveEntry);  // ★ 히스토리에 쌓기
+
             const cell = document.getElementById(`board-${bId}`).querySelectorAll('.cell')[r * SIZE + c];
             const mark = document.createElement('div'); mark.className = 'ttt-mark show';
-            
-            let svgContent = '';
-            if (turnIdx === 1) { 
-                svgContent = `<svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <circle cx="50" cy="50" r="35" stroke="${animal.color}" stroke-width="15" fill="none" />
-                </svg>`;
-            } else { 
-                svgContent = `<svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <line x1="20" y1="20" x2="80" y2="80" stroke="${animal.color}" stroke-width="15" />
-                    <line x1="80" y1="20" x2="20" y2="80" stroke="${animal.color}" stroke-width="15" />
-                </svg>`;
-            }
-            mark.innerHTML = svgContent;
+            mark.innerHTML = turnIdx === 1
+                ? `<svg viewBox="0 0 100 100" width="100%" height="100%"><circle cx="50" cy="50" r="35" stroke="${animal.color}" stroke-width="15" fill="none"/></svg>`
+                : `<svg viewBox="0 0 100 100" width="100%" height="100%"><line x1="20" y1="20" x2="80" y2="80" stroke="${animal.color}" stroke-width="15"/><line x1="80" y1="20" x2="20" y2="80" stroke="${animal.color}" stroke-width="15"/></svg>`;
             cell.appendChild(mark);
-            
             playStoneSound(animal.id);
 
             if (evaluateWinRules(bId, turnIdx)) {
+                clearBoardTimer(bId);
                 bm.stage = 'round_ended';
                 processMatchScoreResult(bId, turnIdx);
                 return;
             }
-
             if (bm.moves.length === SIZE * SIZE) {
+                clearBoardTimer(bId);
                 bm.stage = 'round_ended';
-                triggerLocalAlertUI(bId, `🤝 무승부!<br>다시 대결합니다.`, '다시 대결', () => {
-                    startBoardSequence(bId);
-                });
+                triggerLocalAlertUI(bId, '🤝 무승부!<br>다시 대결합니다.', [{ text: '다시 대결', cls: 'bg-cyan-500 hover:bg-cyan-600 text-black', cb: () => startBoardSequence(bId) }]);
                 return;
             }
 
             bm.turn = turnIdx === 1 ? 2 : 1;
             refreshTurnGlowUI(bId);
+            refreshUndoButtons(bId);  // ★ 무르기 버튼 갱신
+            startTurnTimer(bId);      // ★ 타이머 재시작
         }
 
         function evaluateWinRules(bId, targetPlayer) {
             const b = boardMatches[bId].board;
-            for(let r=0; r<3; r++) { if(b[r][0] === targetPlayer && b[r][1] === targetPlayer && b[r][2] === targetPlayer) return true; }
-            for(let c=0; c<3; c++) { if(b[0][c] === targetPlayer && b[1][c] === targetPlayer && b[2][c] === targetPlayer) return true; }
-            if(b[0][0] === targetPlayer && b[1][1] === targetPlayer && b[2][2] === targetPlayer) return true;
-            if(b[0][2] === targetPlayer && b[1][1] === targetPlayer && b[2][0] === targetPlayer) return true;
+            for (let r = 0; r < 3; r++) { if (b[r][0]===targetPlayer && b[r][1]===targetPlayer && b[r][2]===targetPlayer) return true; }
+            for (let c = 0; c < 3; c++) { if (b[0][c]===targetPlayer && b[1][c]===targetPlayer && b[2][c]===targetPlayer) return true; }
+            if (b[0][0]===targetPlayer && b[1][1]===targetPlayer && b[2][2]===targetPlayer) return true;
+            if (b[0][2]===targetPlayer && b[1][1]===targetPlayer && b[2][0]===targetPlayer) return true;
             return false;
         }
 
         function processMatchScoreResult(bId, roundWinnerNum) {
             let bm = boardMatches[bId];
             if (roundWinnerNum === 1) bm.p1Score++; else bm.p2Score++;
-            
             updateStationHeaders();
             let match = tournamentData[bm.r][bm.m];
             const name = roundWinnerNum === 1 ? match.p1 : match.p2;
-
             if (bm.p1Score >= targetWins || bm.p2Score >= targetWins) {
-                playWinSound(); // 팡파르 효과음 재생!
-                triggerLocalAlertUI(bId, `🏆 <span style="color:#ffd700">${name}</span> 세트 승리!<br>상위 라운드 진출`, '대진 반영', () => {
-                    tournamentData[bm.r][bm.m].winner = name;
-                    updateUpperRounds(); boardMatches[bId] = null;
-                    findAndAssignMatches();
-                });
+                playWinSound();
+                triggerLocalAlertUI(bId, `🏆 <span style="color:#ffd700">${name}</span> 세트 승리!<br>상위 라운드 진출`, [
+                    { text: '대진 반영', cls: 'bg-yellow-400 hover:bg-yellow-300 text-black font-bold', cb: () => {
+                        tournamentData[bm.r][bm.m].winner = name;
+                        updateUpperRounds(); boardMatches[bId] = null;
+                        findAndAssignMatches();
+                    }}
+                ]);
             } else {
-                triggerLocalAlertUI(bId, `👍 ${name} 세트 득점! (${bm.p1Score} : ${bm.p2Score})`, '다음 판 대결', () => {
-                    startBoardSequence(bId);
-                });
+                triggerLocalAlertUI(bId, `👍 ${name} 세트 득점! (${bm.p1Score} : ${bm.p2Score})`, [
+                    { text: '다음 판 대결', cls: 'bg-cyan-500 hover:bg-cyan-600 text-black font-bold', cb: () => startBoardSequence(bId) }
+                ]);
             }
         }
 
-        function triggerLocalAlertUI(bId, textHTML, textBtn, nextEvent) {
-            document.getElementById(`alert-msg-${bId}`).innerHTML = textHTML;
-            document.getElementById(`alert-btn-${bId}`).innerText = textBtn;
+        // ─── ★ 리팩토링된 로컬 알림/확인창 ──────────────────────────
+        function triggerLocalAlertUI(bId, htmlMsg, buttons) {
+            clearBoardTimer(bId);
+            document.getElementById(`alert-msg-${bId}`).innerHTML = htmlMsg;
+            const btnsEl = document.getElementById(`alert-btns-${bId}`);
+            btnsEl.innerHTML = '';
+            buttons.forEach(btn => {
+                const b = document.createElement('button');
+                b.className = `game-modal-btn ${btn.cls}`;
+                b.style.cssText = 'padding:0.6rem 1.6rem; border-radius:10px; font-size:0.95rem; font-weight:800; border:none; cursor:pointer;';
+                b.textContent = btn.text;
+                b.onclick = () => { document.getElementById(`alert-screen-${bId}`).style.display = 'none'; btn.cb(); };
+                btnsEl.appendChild(b);
+            });
             document.getElementById(`alert-screen-${bId}`).style.display = 'flex';
-            document.getElementById(`alert-btn-${bId}`).onclick = () => {
-                document.getElementById(`alert-screen-${bId}`).style.display = 'none';
-                nextEvent();
-            };
         }
 
+        // ─── ★ 스테이션 내부 기권 확인창 ──────────────────────────────
         function forfeitBoardGame(bId, pNum) {
             let bm = boardMatches[bId]; if (!bm) return;
             const allowedStages = ['playing', 'waiting_ready', 'select_p1', 'select_p2'];
@@ -1097,32 +1155,62 @@
             let match = tournamentData[bm.r][bm.m];
             let name = pNum === 1 ? match.p1 : match.p2;
 
-            showGameModal({
-                message: `[제 ${match.id}경기]<br><span style="color:#ff8080">${name}</span> 선수가 기권하겠습니까?`,
+            // 타이머 일시 정지
+            clearBoardTimer(bId);
+
+            showLocalConfirm(bId, {
+                html: `[제 ${match.id}경기]<br><span style="color:#ff8080; font-size:1.1rem;">${name}</span> 선수가<br>기권하겠습니까?`,
                 okText: '🏳 기권',
+                okCls: 'gm-ok-red',
                 cancelText: '취소',
-                okClass: 'gm-ok-red',
                 onOk: () => {
                     const opposite = pNum === 1 ? 2 : 1;
                     bm.stage = 'round_ended';
                     if (opposite === 1) bm.p1Score = targetWins; else bm.p2Score = targetWins;
-
                     let luckyWinner = opposite === 1 ? match.p1 : match.p2;
 
-                    // 현재 표시 중인 모든 화면 닫기
-                    ['ready-screen', 'select-screen', 'roulette-screen', 'game-ui'].forEach(id => {
+                    ['ready-screen','select-screen','roulette-screen','game-ui'].forEach(id => {
                         document.getElementById(`${id}-${bId}`).style.display = 'none';
                     });
-
                     updateStationHeaders();
                     playWinSound();
-                    triggerLocalAlertUI(bId, `🏳️ ${name} 기권으로 인해<br><span style="color:#ffd700">${luckyWinner}</span> 상위 라운드 강제 진출!`, '대진 반영', () => {
-                        tournamentData[bm.r][bm.m].winner = luckyWinner;
-                        updateUpperRounds(); boardMatches[bId] = null;
-                        findAndAssignMatches();
-                    });
+                    triggerLocalAlertUI(bId, `🏳️ ${name} 기권으로 인해<br><span style="color:#ffd700">${luckyWinner}</span> 상위 라운드 강제 진출!`, [
+                        { text: '대진 반영', cls: 'bg-yellow-400 hover:bg-yellow-300 text-black font-bold', cb: () => {
+                            tournamentData[bm.r][bm.m].winner = luckyWinner;
+                            updateUpperRounds(); boardMatches[bId] = null;
+                            findAndAssignMatches();
+                        }}
+                    ]);
+                },
+                onCancel: () => {
+                    // 취소 시 타이머 복구
+                    if (bm.stage === 'playing') startTurnTimer(bId);
                 }
             });
+        }
+
+        function showLocalConfirm(bId, { html, okText, okCls, cancelText, onOk, onCancel }) {
+            const overlay = document.getElementById(`local-confirm-${bId}`);
+            const msgEl = document.getElementById(`local-confirm-msg-${bId}`);
+            const btnsEl = document.getElementById(`local-confirm-btns-${bId}`);
+            msgEl.innerHTML = html;
+            btnsEl.innerHTML = '';
+
+            if (cancelText) {
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'local-confirm-btn gm-cancel';
+                cancelBtn.textContent = cancelText;
+                cancelBtn.onclick = () => { overlay.style.display = 'none'; if (onCancel) onCancel(); };
+                btnsEl.appendChild(cancelBtn);
+            }
+
+            const okBtn = document.createElement('button');
+            okBtn.className = `local-confirm-btn ${okCls}`;
+            okBtn.textContent = okText;
+            okBtn.onclick = () => { overlay.style.display = 'none'; if (onOk) onOk(); };
+            btnsEl.appendChild(okBtn);
+
+            overlay.style.display = 'flex';
         }
 
         function updateStationHeaders() {
@@ -1134,11 +1222,9 @@
                     label.innerHTML = `<span class="bg-gray-800 text-gray-300 px-2 py-0.5 rounded-full mr-2 shadow-sm">제 ${match.id}경기</span> ${match.p1} <span class="text-white font-extrabold text-base">(${bm.p1Score})</span> VS <span class="text-white font-extrabold text-base">(${bm.p2Score})</span> ${match.p2}`;
                 } else {
                     label.innerHTML = `${i}번 판: 다음 경기 배정 대기 중...`;
-                    document.getElementById(`game-ui-${i}`).style.display = 'none';
-                    document.getElementById(`select-screen-${i}`).style.display = 'none';
-                    document.getElementById(`roulette-screen-${i}`).style.display = 'none';
-                    document.getElementById(`alert-screen-${i}`).style.display = 'none';
-                    document.getElementById(`ready-screen-${i}`).style.display = 'none';
+                    ['game-ui','select-screen','roulette-screen','alert-screen','ready-screen'].forEach(id => {
+                        document.getElementById(`${id}-${i}`).style.display = 'none';
+                    });
                 }
             }
         }
@@ -1146,22 +1232,14 @@
         document.addEventListener('touchstart', (e) => { if(e.touches.length > 1) e.preventDefault(); }, {passive: false});
         document.addEventListener('contextmenu', (e) => e.preventDefault());
 
-        // 첫 화면 스파크 파티클 생성
+        // 첫 화면 스파크 파티클
         (function() {
             const wrapper = document.querySelector('.input-wrapper');
             if (!wrapper) return;
             for (let i = 0; i < 22; i++) {
-                const s = document.createElement('div');
-                s.className = 'spark';
+                const s = document.createElement('div'); s.className = 'spark';
                 const size = 3 + Math.random() * 5;
-                s.style.cssText = [
-                    `width:${size}px`, `height:${size}px`,
-                    `left:${5 + Math.random() * 90}%`,
-                    `bottom:${Math.random() * 40}%`,
-                    `animation-duration:${3.5 + Math.random() * 5}s`,
-                    `animation-delay:${Math.random() * 6}s`,
-                    `opacity:${0.3 + Math.random() * 0.5}`
-                ].join(';');
+                s.style.cssText = [`width:${size}px`,`height:${size}px`,`left:${5+Math.random()*90}%`,`bottom:${Math.random()*40}%`,`animation-duration:${3.5+Math.random()*5}s`,`animation-delay:${Math.random()*6}s`,`opacity:${0.3+Math.random()*0.5}`].join(';');
                 wrapper.appendChild(s);
             }
         })();
